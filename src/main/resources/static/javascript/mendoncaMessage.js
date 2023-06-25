@@ -86,13 +86,17 @@ function addMenu(item, index) {
 function validateMenu(){
  var selectDestination = document.getElementById('user-talk');
  var button = document.getElementById('btn-Send-message');
-    
+ 
     if(selectDestination.value==='default'){
 	  button.disabled = true
     }else{
 	  button.disabled = false;
     }
- 
+    
+     var heightForMenssage =  (window.screen.availHeight / 2)*1.20;
+     var elemMessageView = document.getElementById('chat5');
+     
+     elemMessageView.style.height=heightForMenssage+'px';
 }
 
 function loadConversation(){
@@ -101,16 +105,19 @@ function loadConversation(){
     var menssage;
     
         worker.onmessage = function(event) {
+	    if(event.data===401){
+		  location.reload();
+	    }
+	
          menssage = JSON.parse(event.data);
-         menssage.forEach(addMessagesRetrieve)
+         menssage.forEach(addMessagesRetrieve);
         };
-
+        
 }
 
 function addMessagesRetrieve(item, index){    
     var finalMenssageChat = item.sender+" -> "+item.messageText;
     updateScrem(finalMenssageChat);
-	
 }
 
 

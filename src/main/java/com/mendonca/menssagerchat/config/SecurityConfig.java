@@ -24,10 +24,9 @@ public class SecurityConfig {
 		http.csrf().disable()
 		             .addFilterAfter( messageFilter , AuthorizationFilter.class)
 		            .authorizeHttpRequests().antMatchers("/chat", "/message/send","/css/*","/javascript/*").authenticated()		          
-					.antMatchers("/security/register").permitAll().and().formLogin().and().httpBasic();
+					.antMatchers("/security/register").permitAll().and().formLogin().defaultSuccessUrl("/chat", true).and().httpBasic();
 		
 		return http.build();
-
 	}
 
 	@Bean
