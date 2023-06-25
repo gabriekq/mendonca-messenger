@@ -18,15 +18,12 @@ setInterval(function() {
 			menssage = xhttp.responseText;
             postMessage(menssage);
               
+		}else{
+			postMessage(this.status);
 		}
+			
 	};
 	xhttp.open('GET', finalURl, false);
 	xhttp.send();
     
 }, 600);
-
-
-
-
-
-

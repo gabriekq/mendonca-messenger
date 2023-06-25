@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mendonca.menssagerchat.controller.bean.ChatMendoncaBean;
+import com.mendonca.menssagerchat.exception.ChatException;
 import com.mendonca.menssagerchat.model.MessageManager;
 import com.mendonca.menssagerchat.model.PayloadMessage;
 import com.mendonca.menssagerchat.repository.UserMessengerRepository;
@@ -65,6 +66,10 @@ public class MessageContoller {
 	@CrossOrigin(origins = "*")
 	@GetMapping("/retrieveMessages/{userName}")
 	public List<PayloadMessage> retrieveMessages(@PathVariable String userName){
+		
+		if(!ChatMendoncaBean.menssagesManager.containsKey(userName)) {  
+			throw new ChatException("User not Authenticate");
+		}
 		
 	  return ChatMendoncaBean.menssagesManager.get(userName).getMessages();
 			
