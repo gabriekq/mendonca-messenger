@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+ <link rel="stylesheet" type="text/css" href="../static/css/styles.css" th:href="@{/css/styles.css}" />
+
+
+<title>Mendonca Chat</title>
+</head>
+<body onload="loadMainPage()">
+<script type="text/javascript" src="../static/javascript/mendoncaMessage.js" th:src="@{/javascript/mendoncaMessage.js}"></script>
+
+	<h2 id="userName">mendonca chat</h2>
+
+	<div class="chat-view">
+         
+         <div class="message-data" >
+          <textarea class="chat1" id="chat5"  disabled="disabled"></textarea> 
+          <div class="input-user">
+             <label>Send Message to</label>
+              <select  name="users-avalible" id="user-talk" onchange="validateMenu()" >
+              <option value="default">Select Someone</option>
+              </select>
+          </div>
+           
+         </div>
+      
+		<div class="menssage-area">
+		<textarea class="chat2" id="chat6"  ></textarea>
+		<button  id="btn-Send-message" class="btn-Send" name="Send"  onclick="sendMenssage()">Send</button>
+		</div>
+
+	</div>
+
+	<div class="menssage-view"></div>
+
+</body>
+</html>

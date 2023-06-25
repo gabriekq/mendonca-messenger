@@ -1,0 +1,44 @@
+@charset "ISO-8859-1";
+
+.chat-view{
+	width:100%;
+	margin-left: 0px;
+	height: fit-content;
+	display: grid;
+	gap: 15px;
+}
+
+.chat1{
+	width: 80%;
+	height: 50em;
+	resize: none;
+}
+
+.menssage-area{
+	display: inline-flex;
+}
+
+.message-data{
+	display: inline-flex;
+}
+
+.chat2{
+	width: 70%;
+	height: 5em;
+	resize: none;
+	border-radius: 5px;
+}
+
+.btn-Send{
+	width: 10%;
+	height: 100%;
+}
+
+.input-user{
+	display: inline-grid;
+	width: 15%;
+    margin-top: initial;
+    margin-bottom: auto;
+    margin-left:  5px;
+    
+}
