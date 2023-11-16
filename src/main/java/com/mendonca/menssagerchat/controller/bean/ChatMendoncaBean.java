@@ -9,6 +9,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Connection;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
@@ -19,9 +20,14 @@ import com.mendonca.menssagerchat.model.MessageManager;
 @Component
 public class ChatMendoncaBean {
 
-	private final String passwordActive = "gabriel";
-	private final String userNameActive = "gabriel";
-	private final String urlActive = "tcp://localhost:61616";
+	@Value("${mendonca.active.password}")
+	private  String passwordActive;
+	
+	@Value("${mendonca.active.username}")
+	private  String userNameActive;
+	
+	@Value("${mendonca.active.url}")
+	private  String urlActive;
 	
 	public static Map<String, MessageManager> menssagesManager = new HashMap<>();
 
