@@ -50,6 +50,15 @@ public class MessageManager implements Runnable {
 						try {
 
 							if (message instanceof ObjectMessage) {
+								
+								if(!payloadMessages.isEmpty()) {
+									try {
+										payloadMessages.wait();
+									} catch (InterruptedException e) {
+										e.printStackTrace();
+									}
+								}
+								
 								ObjectMessage objectMessage = (ObjectMessage) message;
 								PayloadMessage messagePayloadMessage = (PayloadMessage) objectMessage.getObject();
 								payloadMessages.add(messagePayloadMessage);
@@ -102,6 +111,7 @@ public class MessageManager implements Runnable {
 				if (!this.payloadMessages.isEmpty()) {
 					ArrayList<PayloadMessage> payloadMessagesReturn = new ArrayList<>(this.payloadMessages);
 					this.payloadMessages.clear();
+					this.payloadMessages.notifyAll();
 					return payloadMessagesReturn;
 				} else {
 
