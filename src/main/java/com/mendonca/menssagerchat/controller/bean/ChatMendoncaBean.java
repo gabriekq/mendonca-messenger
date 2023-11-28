@@ -1,11 +1,9 @@
 package com.mendonca.menssagerchat.controller.bean;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Connection;
 import org.apache.activemq.ActiveMQConnectionFactory;
