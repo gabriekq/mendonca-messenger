@@ -1,4 +1,4 @@
-# mendonca-messenger
+# Mendonca-messenger
 Project that send and receive user messages through the network.
 
 
