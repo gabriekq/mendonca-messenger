@@ -36,6 +36,7 @@ public class MessageContoller {
 	@CrossOrigin(origins = "*")
 	@PostMapping(path = "/send")
 	public synchronized ResponseEntity<String> sendMenssage(@RequestBody PayloadMessage payloadMessage) {		   
+	//	System.out.println(payloadMessage.getAudioData());
 		MessageManager menssageManager = ChatMendoncaBean.menssagesManager.get(payloadMessage.getSender());
 		menssageManager.setPayloadMessageSend(payloadMessage);
 		executorService.submit(menssageManager);
