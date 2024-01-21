@@ -12,6 +12,8 @@
 	width: 80%;
 	height: 40em;
 	resize: none;
+	white-space:pre-wrap;
+	overflow-y: auto;
 }
 
 .menssage-area{

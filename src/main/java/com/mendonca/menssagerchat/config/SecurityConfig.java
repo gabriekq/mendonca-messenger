@@ -21,9 +21,18 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	
-		http.csrf().disable()
+		http      .requiresChannel(channel -> channel.anyRequest().requiresSecure())
+		           .csrf().disable()
+		              
 		             .addFilterAfter( messageFilter , AuthorizationFilter.class)
-		            .authorizeHttpRequests().antMatchers("/chat", "/message/send","/css/*","/javascript/*").authenticated()		          
+		            
+		            .authorizeHttpRequests().antMatchers("/chat", "/message/send","/css/*","/javascript/*")
+		            
+		            .authenticated()
+		            
+		            
+		            
+		           
 					.antMatchers("/security/register").permitAll().and().formLogin().defaultSuccessUrl("/chat", true).and().httpBasic();
 		
 		return http.build();
