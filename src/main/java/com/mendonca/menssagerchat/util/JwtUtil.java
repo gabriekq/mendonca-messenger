@@ -1,6 +1,5 @@
 package com.mendonca.menssagerchat.util;
 
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,8 +8,7 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import com.mendonca.menssagerchat.model.UserMessenger;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.TextCodec;
+import io.jsonwebtoken.security.Keys;
 
 
 @Service
@@ -25,14 +23,16 @@ public class JwtUtil {
 	}
 	
 	private String createToken(Map<String, Object> claims,String subject )   {
-		
-		return Jwts
-				.builder()
-				.setClaims(claims)
-				.setSubject(subject)
-		        .setIssuedAt(new Date(System.currentTimeMillis()))
-		        .setExpiration(new Date(System.currentTimeMillis()+ 1000*60*60*10 ))
-		        .signWith(SignatureAlgorithm.HS512,TextCodec.BASE64.encode(SECRET_KEY.getBytes())).compact();
+			
+	return Jwts.builder()
+			.claims()
+			.empty()
+			.add(claims)
+			.and()
+			.subject(subject)
+			.issuedAt(new Date(System.currentTimeMillis()))
+			.expiration(new Date(System.currentTimeMillis()+ 1000*60*60*10 )).signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes())).compact();
+			
 	}
 	
 	public Boolean validateToken(String token,UserMessenger userMessenger) {
@@ -50,7 +50,15 @@ public class JwtUtil {
 	}
 
 	private Claims extractAllClaims(String token) {	
-	   return Jwts.parser().setSigningKey(TextCodec.BASE64.encode(SECRET_KEY.getBytes())).parseClaimsJws(token).getBody();
+	
+	   Claims  claims = Jwts.parser()
+                 .setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
+                 .build()
+                 .parseClaimsJws(token)
+                 .getBody();
+	   
+	   return claims;
+		
 	}
 	
 	public Date extractExpiration(String token) {

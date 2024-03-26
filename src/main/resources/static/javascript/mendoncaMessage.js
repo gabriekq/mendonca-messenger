@@ -1,7 +1,5 @@
 /**
- * 
- // TODO implementar o jwt que eu deixei no navegador copiar para o javascript e remover da sessao do navegador, e usar em todas as request, base url usar javascript
- 
+ *  
  */
 
 const baseUrl = 'https://192.168.0.104:8443/';
@@ -13,10 +11,10 @@ var audioDataBase64;
 
 function loadMainPage() {
 	validateMenu();
-	loadUserName(); // DONE
-	loadUsersAvailable(); // DONE
+	loadUserName();
+	loadUsersAvailable();
 	ajustScreenSize();
-	loadConversation(); // LATER
+	loadConversation();
 }
 
 function sendMenssage() {

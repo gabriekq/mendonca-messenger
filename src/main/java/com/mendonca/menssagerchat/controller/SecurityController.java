@@ -15,7 +15,6 @@ import com.mendonca.menssagerchat.model.UserMessenger;
 import com.mendonca.menssagerchat.repository.UserMessengerRepository;
 
 @RestController
-//@RequestMapping("security")
 public class SecurityController {
 
 	@Autowired
