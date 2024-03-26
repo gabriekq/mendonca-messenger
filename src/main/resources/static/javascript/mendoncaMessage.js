@@ -1,8 +1,11 @@
 /**
  * 
+ // TODO implementar o jwt que eu deixei no navegador copiar para o javascript e remover da sessao do navegador, e usar em todas as request, base url usar javascript
+ 
  */
 
-const baseUrl = 'https://192.168.0.103:8443/';
+const baseUrl = 'https://192.168.0.104:8443/';
+const jwtUser=localStorage.jwt;
 var userName;
 const usersLogged = new Map();
 let audioChunks = [];
@@ -10,10 +13,10 @@ var audioDataBase64;
 
 function loadMainPage() {
 	validateMenu();
-	loadUserName();
-	loadUsersAvailable();
+	loadUserName(); // DONE
+	loadUsersAvailable(); // DONE
 	ajustScreenSize();
-	loadConversation();
+	loadConversation(); // LATER
 }
 
 function sendMenssage() {
@@ -63,6 +66,7 @@ function sendRequest(menssage) {
 
 	xhttp.open('POST', finalURl, false);
 	xhttp.setRequestHeader("Content-Type", "application/json");
+	xhttp.setRequestHeader("Authorization", "Bearer "+jwtUser);
 	xhttp.send(payloadMessage);
 }
 
@@ -78,6 +82,7 @@ function loadUserName() {
 		}
 	};
 	xhttp.open('GET', finalURl, false);
+	xhttp.setRequestHeader("Authorization", "Bearer "+jwtUser);
 	xhttp.send();
 }
 
@@ -93,6 +98,7 @@ function loadUsersAvailable() {
 		}
 	}
 	xhttp.open('GET', finalURl, false);
+	xhttp.setRequestHeader("Authorization", "Bearer "+jwtUser);
 	xhttp.send();
 }
 
@@ -126,7 +132,7 @@ function validateMenu() {
 
 function loadConversation() {
 
-	var worker = new Worker("/javascript/workers.js?userName=" + userName);
+	var worker = new Worker("/javascript/workers.js?userName=" + userName+"?jwt="+jwtUser);
 	var menssage;
 
 	worker.onmessage = function(event) {
@@ -292,11 +298,3 @@ function createAudioScreen(item , color){
        screenMenssage.append(divElement);
        screenMenssage.append('\n');
 }
-
-
-
-
-
-
-
-

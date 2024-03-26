@@ -48,6 +48,9 @@ public class MessageContoller {
 	@GetMapping("/currentUser")
 	public ResponseEntity<String>  getUsername() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println(authentication.isAuthenticated());
+		//System.out.println(authentication.getCredentials().toString());
+		
 		String userName = authentication.getName();
 		return  ResponseEntity.ok(userName);
 	}

@@ -13,6 +13,9 @@ public class PageController {
 	}
 	
 	
-	
+	@GetMapping(path = "/myLogin")
+	public String loadMyLogin() {
+		return "myLogin";
+	}
 	
 }
