@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Login</title>
+</head>
+<body>
+<script type="text/javascript"  th:src="@{/javascript/login.js}" > </script>
+
+  <label for="fname">User Name</label>
+  <input type="text" id="user" name="user"/><br><br>
+  <label for="lname">Password:</label>
+  <input type="text" id="password" name="password"/><br><br>
+  <button  onclick="authenticate()" >Authenticate</button>
+
+
+</body>
+</html>
