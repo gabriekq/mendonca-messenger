@@ -16,7 +16,7 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 public class SecurityConfig {
 		
 	@Autowired
-	private JwtRequestFilter jwtRequestFilter; 
+	private JwtRequestFilter jwtRequestFilter;
 	
 	
 	@Bean
@@ -29,7 +29,7 @@ public class SecurityConfig {
 		    .authorizeHttpRequests()
 		    .antMatchers("/message/send")
 		    .authenticated()
-			.antMatchers("/security/register","/css/*","/authenticate","/chat").permitAll().and().formLogin().loginPage("/myLogin").and().sessionManagement()
+			.antMatchers("/security/register","/css/*","/authenticate").permitAll().and().formLogin().loginPage("/myLogin").and().sessionManagement()
 		    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		return http.build();
 	}

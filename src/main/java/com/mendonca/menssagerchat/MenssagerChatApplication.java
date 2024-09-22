@@ -2,6 +2,7 @@ package com.mendonca.menssagerchat;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ComponentScan(basePackages = "com.mendonca.menssagerchat.controller")
 @ComponentScan(basePackages = {"com.mendonca.menssagerchat.config"})
 @EnableJpaRepositories
+@EnableCaching
 public class MenssagerChatApplication implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
