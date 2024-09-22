@@ -2,7 +2,7 @@
  *  
  */
 
-const baseUrl = 'https://192.168.0.104:8443/';
+const baseUrl = 'https://192.168.1.239:8443/';
 const jwtUser=localStorage.jwt;
 var userName;
 const usersLogged = new Map();
@@ -124,6 +124,7 @@ function validateMenu() {
 	if (selectDestination.selectedIndex !== -1) {
 		var elemtTextArea = document.getElementById('chat5');
 		elemtTextArea.replaceWith(usersLogged.get(selectDestination.value));
+		selectDestination.options[selectDestination.selectedIndex].style.fontWeight='normal';
 	}
 
 }
@@ -134,8 +135,9 @@ function loadConversation() {
 	var menssage;
 
 	worker.onmessage = function(event) {
+		
 		if (event.data === 401) {
-			location.reload();
+			window.location.href = window.location.origin+'/myLogin';
 		}
 
 		menssage = JSON.parse(event.data);
@@ -146,6 +148,8 @@ function loadConversation() {
 
 function addMessagesRetrieve(item, index) {
 	var textAreaTarget = usersLogged.get(item.sender);
+	console.log('item ->>'+item.sender);
+	highlightUserUnselect(item.sender);
 	
 	if(item.messageText.length > 0){
      textAreaTarget.append(item.sender + " -> " + item.messageText);
@@ -296,3 +300,20 @@ function createAudioScreen(item , color){
        screenMenssage.append(divElement);
        screenMenssage.append('\n');
 }
+
+function highlightUserUnselect(userName){
+	
+	var selectDestination = document.getElementById('user-talk');
+	
+	
+	for(var index=0;index < selectDestination.options.length; index++){
+			
+		if(selectDestination.options[index].text ===userName &&  selectDestination.options[index].selected == false ){
+			selectDestination.options[index].style.fontWeight='bold';
+			break;
+		}
+
+	}
+	
+}
+

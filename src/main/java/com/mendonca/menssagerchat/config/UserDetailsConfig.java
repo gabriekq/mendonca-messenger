@@ -19,14 +19,14 @@ import org.springframework.stereotype.Service;
 import com.mendonca.menssagerchat.controller.bean.ChatMendoncaBean;
 import com.mendonca.menssagerchat.model.MessageManager;
 import com.mendonca.menssagerchat.model.UserMessenger;
-import com.mendonca.menssagerchat.repository.UserMessengerRepository;
+import com.mendonca.menssagerchat.service.UserMessengerService;
 import com.mendonca.menssagerchat.util.JwtUtil;
 
 @Service
 public class UserDetailsConfig implements AuthenticationProvider {
 
 	@Autowired
-	private UserMessengerRepository userMessengerRepository;
+	private UserMessengerService userMessengerService;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -45,7 +45,7 @@ public class UserDetailsConfig implements AuthenticationProvider {
 
 		String userName = authentication.getName();
 		String password = authentication.getCredentials().toString();
-		Optional<UserMessenger> userMenssage = userMessengerRepository.findById(userName);
+		Optional<UserMessenger> userMenssage = userMessengerService.searchByUserName(userName);
 
 		if (userMenssage.isPresent()) {
 

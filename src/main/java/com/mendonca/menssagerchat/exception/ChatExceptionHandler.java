@@ -13,7 +13,6 @@ public class ChatExceptionHandler extends ResponseEntityExceptionHandler  {
 	@ExceptionHandler({ChatException.class})
 	public ResponseEntity<String> userNotAuthenticate(Exception exception) {
 		return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
-	}
-	
-	
+	}	
+		
 }

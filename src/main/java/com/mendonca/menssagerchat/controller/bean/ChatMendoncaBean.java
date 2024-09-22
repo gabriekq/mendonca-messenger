@@ -9,6 +9,8 @@ import javax.jms.Connection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.autoconfigure.cache.CacheManagerCustomizer;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -54,4 +56,21 @@ public class ChatMendoncaBean {
 	}
 
 
+	@Bean
+    public CacheManagerCustomizer <ConcurrentMapCacheManager> cacheManagerCustomizer(){
+    	return new CacheManagerCustomizer<ConcurrentMapCacheManager>() {
+
+			@Override
+			public void customize(ConcurrentMapCacheManager cacheManager) {
+				cacheManager.setAllowNullValues(false);
+			
+			}
+    		
+    	};	
+    }
+	
+	
+	
+	
+	
 }
