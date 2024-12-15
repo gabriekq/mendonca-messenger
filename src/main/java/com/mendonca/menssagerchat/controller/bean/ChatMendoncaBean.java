@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.mendonca.menssagerchat.logs.AspectLogs;
 import com.mendonca.menssagerchat.model.MessageManager;
 
 @Component
@@ -70,7 +71,12 @@ public class ChatMendoncaBean {
     }
 	
 	
-	
+	@Bean
+	public AspectLogs CreateAspectLogs() {
+		AspectLogs aspectLogs = new AspectLogs();
+		return aspectLogs;
+		
+	}
 	
 	
 }

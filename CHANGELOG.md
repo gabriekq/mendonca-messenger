@@ -1,3 +1,6 @@
+## [1.0.2] - 2024-12-15
+
+- Using logging to methods calls on the controller class
 
 ## [1.0.1] - 2024-09-22
 
