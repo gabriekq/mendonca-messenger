@@ -51,5 +51,4 @@ public class PayloadMessage implements Serializable {
 		this.audioData = audioData;
 	}
 
-
 }
