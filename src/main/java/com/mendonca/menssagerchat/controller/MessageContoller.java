@@ -36,7 +36,6 @@ public class MessageContoller {
 	@CrossOrigin(origins = "*")
 	@PostMapping(path = "/send")
 	public synchronized ResponseEntity<String> sendMenssage(@RequestBody PayloadMessage payloadMessage) {		   
-	//	System.out.println(payloadMessage.getAudioData());
 		MessageManager menssageManager = ChatMendoncaBean.menssagesManager.get(payloadMessage.getSender());
 		menssageManager.setPayloadMessageSend(payloadMessage);
 		executorService.submit(menssageManager);
@@ -47,10 +46,7 @@ public class MessageContoller {
 	@CrossOrigin(origins = "*")
 	@GetMapping("/currentUser")
 	public ResponseEntity<String>  getUsername() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println(authentication.isAuthenticated());
-		//System.out.println(authentication.getCredentials().toString());
-		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();		
 		String userName = authentication.getName();
 		return  ResponseEntity.ok(userName);
 	}
@@ -59,6 +55,8 @@ public class MessageContoller {
 	@CrossOrigin(origins = "*")
 	@GetMapping("/usersAvailable/{userName}")
 	public ResponseEntity<List<String>>   getUsersAvailable(@PathVariable String userName  ) {
+		
+		validateUserAuthenticate(userName);
 		
 	    ArrayList<String> usersAvailable = new ArrayList<>(userMessengerRepository.findAllUsersById()); 
 	    List<String> usersAvailableFilter = usersAvailable.stream().filter( user -> !user.equalsIgnoreCase(userName)).collect(Collectors.toList());
@@ -71,13 +69,21 @@ public class MessageContoller {
 	@GetMapping("/retrieveMessages/{userName}")
 	public List<PayloadMessage> retrieveMessages(@PathVariable String userName){
 		
-		if(!ChatMendoncaBean.menssagesManager.containsKey(userName)) {  
-			throw new ChatException("User not Authenticate");
-		}
+		validateUserAuthenticate(userName);
 		
 	  return ChatMendoncaBean.menssagesManager.get(userName).getMessages();
 			
 	}
+	
+	
+	private void validateUserAuthenticate(String userName){
+		if(!ChatMendoncaBean.menssagesManager.containsKey(userName)) {  
+			throw new ChatException("User not Authenticate");
+		}
+		
+		
+	}
+	
 	
 	
 }
