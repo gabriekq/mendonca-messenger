@@ -3,7 +3,7 @@
  */
 
 const baseUrl = 'https://192.168.1.239:8443/';
-const jwtUser=localStorage.jwt;
+var jwtUser = localStorage.jwt;
 var userName;
 const usersLogged = new Map();
 let audioChunks = [];
@@ -14,7 +14,9 @@ function loadMainPage() {
 	loadUserName();
 	loadUsersAvailable();
 	ajustScreenSize();
+
 	loadConversation();
+	
 }
 
 function sendMenssage() {
@@ -39,10 +41,10 @@ function updateScrem(menssage) {
 	}
 
 	if (validateAudioChunksSend()) {
-	
-		var selectDestination = document.getElementById('user-talk');	
-		let item = {"sender":selectDestination.value,"audioData":audioDataBase64};		
-		createAudioScreen(item,'#FFD700');
+
+		var selectDestination = document.getElementById('user-talk');
+		let item = { "sender": selectDestination.value, "audioData": audioDataBase64 };
+		createAudioScreen(item, '#FFD700');
 	}
 	chat5.scrollTop = chat5.scrollHeight;
 }
@@ -55,8 +57,8 @@ function cleanTextFieldUser() {
 }
 
 
-function sendRequest(menssage) { 
-	   
+function sendRequest(menssage) {
+
 	var selectDestination = document.getElementById('user-talk');
 	var payloadMessage = JSON.stringify({ "sender": userName, "addressee": selectDestination.value, "messageText": menssage, "audioData": audioDataBase64 });
 	var xhttp = new XMLHttpRequest();
@@ -64,7 +66,7 @@ function sendRequest(menssage) {
 
 	xhttp.open('POST', finalURl, false);
 	xhttp.setRequestHeader("Content-Type", "application/json");
-	xhttp.setRequestHeader("Authorization", "Bearer "+jwtUser);
+	xhttp.setRequestHeader("Authorization", "Bearer " + jwtUser);
 	xhttp.send(payloadMessage);
 }
 
@@ -80,7 +82,7 @@ function loadUserName() {
 		}
 	};
 	xhttp.open('GET', finalURl, false);
-	xhttp.setRequestHeader("Authorization", "Bearer "+jwtUser);
+	xhttp.setRequestHeader("Authorization", "Bearer " + jwtUser);
 	xhttp.send();
 }
 
@@ -91,12 +93,13 @@ function loadUsersAvailable() {
 	xhttp.onreadystatechange = function() {
 
 		if (this.readyState == 4 && this.status == 200) {
+			
 			arrNames = JSON.parse(xhttp.responseText);
 			arrNames.forEach(addMenu);
 		}
 	}
 	xhttp.open('GET', finalURl, false);
-	xhttp.setRequestHeader("Authorization", "Bearer "+jwtUser);
+	xhttp.setRequestHeader("Authorization", "Bearer " + jwtUser);
 	xhttp.send();
 }
 
@@ -124,20 +127,21 @@ function validateMenu() {
 	if (selectDestination.selectedIndex !== -1) {
 		var elemtTextArea = document.getElementById('chat5');
 		elemtTextArea.replaceWith(usersLogged.get(selectDestination.value));
-		selectDestination.options[selectDestination.selectedIndex].style.fontWeight='normal';
+		selectDestination.options[selectDestination.selectedIndex].style.fontWeight = 'normal';
 	}
 
 }
 
 function loadConversation() {
 
-	var worker = new Worker("/javascript/workers.js?userName=" + userName+"?jwt="+jwtUser);
+	var worker = new Worker("/javascript/workers.js?userName=" + userName + "?jwt=" + jwtUser);
 	var menssage;
 
 	worker.onmessage = function(event) {
-		
+
+		console.log('Receve message' + event.data);
 		if (event.data === 401) {
-			window.location.href = window.location.origin+'/myLogin';
+			window.location.href = window.location.origin + '/myLogin';
 		}
 
 		menssage = JSON.parse(event.data);
@@ -148,18 +152,18 @@ function loadConversation() {
 
 function addMessagesRetrieve(item, index) {
 	var textAreaTarget = usersLogged.get(item.sender);
-	console.log('item ->>'+item.sender);
+	console.log('item ->>' + item.sender);
 	highlightUserUnselect(item.sender);
-	
-	if(item.messageText.length > 0){
-     textAreaTarget.append(item.sender + " -> " + item.messageText);
-	 textAreaTarget.append('\n');
+
+	if (item.messageText.length > 0) {
+		textAreaTarget.append(item.sender + " -> " + item.messageText);
+		textAreaTarget.append('\n');
 	}
-	
-	if((item.audioData != null) &&  (item.audioData.length > 0)){
-      createAudioScreen(item,'#9acd32');
+
+	if ((item.audioData != null) && (item.audioData.length > 0)) {
+		createAudioScreen(item, '#9acd32');
 	}
-	
+
 }
 
 function sendMenssageArea(event) {
@@ -174,7 +178,7 @@ function sendMenssageArea(event) {
 }
 
 function validToSend() {
-	if ((validateSelectDestination()) && ((validateChatTextField()) || (validateAudioChunksSend()))) { 
+	if ((validateSelectDestination()) && ((validateChatTextField()) || (validateAudioChunksSend()))) {
 		return true;
 	} else {
 		return false;
@@ -263,57 +267,86 @@ function validateAudioChunksSend() {
 
 }
 
-function convertBobToBase64(){
-	  const blobObj = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
-	  var reader = new FileReader();
-	  reader.readAsDataURL(blobObj);
-       
-	  reader.onload = function() {
+function convertBobToBase64() {
+	const blobObj = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
+	var reader = new FileReader();
+	reader.readAsDataURL(blobObj);
+
+	reader.onload = function() {
 		audioDataBase64 = reader.result;
 		return;
 	}
 }
 
-function createAudioScreen(item , color){
-	   
-	   var screenMenssage = usersLogged.get(item.sender); 
-	 
-	   var divElement =  document.createElement('div'); 
-	   divElement.style.backgroundColor = color;
-	   divElement.style.width = '430px';
-	   divElement.style.fontWeight = 'bold';
-	   divElement.id = 'audioWrapper'
-	     
-	   var audioElement = document.createElement('audio');
-	   audioElement.id = 'audioItem';
-	   audioElement.controls = true;
-	   audioElement.type = 'audio/ogg';	 
-       audioElement.src = item.audioData;
-       
-       if(color==='#FFD700'){
-	     divElement.append('You -> ');
-        }else{
-	      divElement.append(item.sender + " -> ");
-        }
+function createAudioScreen(item, color) {
 
-       divElement.append(audioElement);  
-       screenMenssage.append(divElement);
-       screenMenssage.append('\n');
+	var screenMenssage = usersLogged.get(item.sender);
+
+	var divElement = document.createElement('div');
+	divElement.style.backgroundColor = color;
+	divElement.style.width = '430px';
+	divElement.style.fontWeight = 'bold';
+	divElement.id = 'audioWrapper'
+
+	var audioElement = document.createElement('audio');
+	audioElement.id = 'audioItem';
+	audioElement.controls = true;
+	audioElement.type = 'audio/ogg';
+	audioElement.src = item.audioData;
+
+	if (color === '#FFD700') {
+		divElement.append('You -> ');
+	} else {
+		divElement.append(item.sender + " -> ");
+	}
+
+	divElement.append(audioElement);
+	screenMenssage.append(divElement);
+	screenMenssage.append('\n');
 }
 
-function highlightUserUnselect(userName){
-	
+function highlightUserUnselect(userName) {
+
 	var selectDestination = document.getElementById('user-talk');
-	
-	
-	for(var index=0;index < selectDestination.options.length; index++){
-			
-		if(selectDestination.options[index].text ===userName &&  selectDestination.options[index].selected == false ){
-			selectDestination.options[index].style.fontWeight='bold';
+
+
+	for (var index = 0; index < selectDestination.options.length; index++) {
+
+		if (selectDestination.options[index].text === userName && selectDestination.options[index].selected == false) {
+			selectDestination.options[index].style.fontWeight = 'bold';
 			break;
 		}
 
 	}
-	
+
 }
+
+function logOut() {
+
+  
+	var xhttp = new XMLHttpRequest();
+	var finalURl = baseUrl + 'exit';
+	
+	xhttp.onreadystatechange = function() {
+
+		if (this.readyState == 4 && this.status == 401) {
+			  localStorage.jwt=null;
+              jwtUser=null;
+              
+	        window.location.href = window.location.origin + '/myLogin';   
+		}
+
+	}
+	xhttp.open('POST', finalURl, false);
+	xhttp.setRequestHeader("Authorization", "Bearer " + jwtUser);
+	xhttp.send();
+}
+
+
+
+
+
+
+
+
 

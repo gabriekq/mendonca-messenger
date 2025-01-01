@@ -1,3 +1,8 @@
+## [1.0.3] - 2025-01-01
+
+- Add button to log off.
+- Fix issue relate to authentication in some scenarios.
+
 ## [1.0.2] - 2024-12-15
 
 - Using logging to methods calls on the controller class

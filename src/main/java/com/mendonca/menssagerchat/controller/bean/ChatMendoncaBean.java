@@ -63,7 +63,7 @@ public class ChatMendoncaBean {
 
 			@Override
 			public void customize(ConcurrentMapCacheManager cacheManager) {
-				cacheManager.setAllowNullValues(false);
+				cacheManager.setAllowNullValues(true);
 			
 			}
     		

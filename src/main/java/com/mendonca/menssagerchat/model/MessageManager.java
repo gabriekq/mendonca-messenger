@@ -119,5 +119,15 @@ public class MessageManager implements Runnable {
 		}
 
 	}
+	
+	public void closeSessions()  {
+		try {
+			this.session.close();
+			System.err.println("Session closed. for "+this.userName);
+		} catch (JMSException JMSException) {	
+			System.err.println("Session closed. for "+JMSException.toString());
+		}
+		
+	}
 
 }
