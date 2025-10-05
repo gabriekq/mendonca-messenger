@@ -66,8 +66,11 @@ public class MessageContoller {
 	
 	
 	@CrossOrigin(origins = "*")
-	@GetMapping("/retrieveMessages/{userName}")
-	public List<PayloadMessage> retrieveMessages(@PathVariable String userName){
+	@GetMapping("/retrieveMessages")
+	public synchronized List<PayloadMessage> retrieveMessages(){
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();		
+		String userName = authentication.getName();
 		
 		validateUserAuthenticate(userName);
 		
@@ -75,15 +78,21 @@ public class MessageContoller {
 			
 	}
 	
-	
 	private void validateUserAuthenticate(String userName){
 		if(!ChatMendoncaBean.menssagesManager.containsKey(userName)) {  
 			throw new ChatException("User not Authenticate");
 		}
-		
-		
 	}
 	
+	@CrossOrigin(origins = "*")
+	@GetMapping("/retrieveStatusOperation")
+	public ResponseEntity<Integer> operationStatus(){
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();		
+		String userName = authentication.getName();
+		validateUserAuthenticate(userName);
+		int statusOperation= ChatMendoncaBean.menssagesManager.get(userName).assistStatus();
+		return ResponseEntity.status(HttpStatus.OK).body(statusOperation);
+	}
 	
 	
 }

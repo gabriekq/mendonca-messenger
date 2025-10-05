@@ -1,5 +1,5 @@
 
-const baseUrl = 'https://192.168.1.239:8443/';
+const baseUrl = 'https://192.168.0.225:8443/';
 var menssage;
 
 setInterval(function() {
@@ -16,12 +16,16 @@ setInterval(function() {
     var userJwt = parameters['jwt'];
     
     var xhttp = new XMLHttpRequest();
-	var finalURl = baseUrl + 'message/retrieveMessages/'+userName;
+	
+	var finalURl = baseUrl + 'message/retrieveStatusOperation';
 
 	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {			
-			menssage = xhttp.responseText;
-            postMessage(menssage);
+		
+		if (this.readyState == 4 && this.status == 200 ) {			
+			statusReturned = xhttp.responseText;
+			console.log('get status ->> '+statusReturned);
+
+            postMessage(statusReturned);
               
 		}else{
 			postMessage(this.status);

@@ -1,3 +1,12 @@
+## [1.0.4] - 2025-10-04
+
+- Change the logic to receive the income messages.
+
+- Remove redundancy in the client code that uses “XMLHttpRequest” lib.
+
+- Change end-point “/retrieveMessages” to get the parameter through the JWT value.
+
+
 ## [1.0.3] - 2025-01-01
 
 - Add button to log off.

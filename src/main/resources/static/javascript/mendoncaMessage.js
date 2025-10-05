@@ -2,12 +2,14 @@
  *  
  */
 
-const baseUrl = 'https://192.168.1.239:8443/';
+const baseUrl = 'https://192.168.0.225:8443/';
 var jwtUser = localStorage.jwt;
 var userName;
 const usersLogged = new Map();
 let audioChunks = [];
 var audioDataBase64;
+var xhttpRequest = new XMLHttpRequest();
+var messageReceived;
 
 function loadMainPage() {
 	validateMenu();
@@ -16,7 +18,6 @@ function loadMainPage() {
 	ajustScreenSize();
 
 	loadConversation();
-	
 }
 
 function sendMenssage() {
@@ -61,46 +62,46 @@ function sendRequest(menssage) {
 
 	var selectDestination = document.getElementById('user-talk');
 	var payloadMessage = JSON.stringify({ "sender": userName, "addressee": selectDestination.value, "messageText": menssage, "audioData": audioDataBase64 });
-	var xhttp = new XMLHttpRequest();
+
 	var finalURl = baseUrl + 'message/send';
 
-	xhttp.open('POST', finalURl, false);
-	xhttp.setRequestHeader("Content-Type", "application/json");
-	xhttp.setRequestHeader("Authorization", "Bearer " + jwtUser);
-	xhttp.send(payloadMessage);
+	xhttpRequest.open('POST', finalURl, false);
+	xhttpRequest.setRequestHeader("Content-Type", "application/json");
+	xhttpRequest.setRequestHeader("Authorization", "Bearer " + jwtUser);
+	xhttpRequest.send(payloadMessage);
 }
 
 function loadUserName() {
-	var xhttp = new XMLHttpRequest();
+	
 	var finalURl = baseUrl + 'message/currentUser';
 
-	xhttp.onreadystatechange = function() {
+	xhttpRequest.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var elemTitle = document.getElementById('userName');
-			userName = xhttp.responseText;
-			elemTitle.append(' : ' + xhttp.responseText);
+			userName = xhttpRequest.responseText;
+			elemTitle.append(' : ' + xhttpRequest.responseText);
 		}
 	};
-	xhttp.open('GET', finalURl, false);
-	xhttp.setRequestHeader("Authorization", "Bearer " + jwtUser);
-	xhttp.send();
+	xhttpRequest.open('GET', finalURl, false);
+	xhttpRequest.setRequestHeader("Authorization", "Bearer " + jwtUser);
+	xhttpRequest.send();
 }
 
 function loadUsersAvailable() {
-	var xhttp = new XMLHttpRequest();
+
 	var finalURl = baseUrl + 'message/usersAvailable/' + userName;
 
-	xhttp.onreadystatechange = function() {
+	xhttpRequest.onreadystatechange = function() {
 
 		if (this.readyState == 4 && this.status == 200) {
 			
-			arrNames = JSON.parse(xhttp.responseText);
+			arrNames = JSON.parse(xhttpRequest.responseText);
 			arrNames.forEach(addMenu);
 		}
 	}
-	xhttp.open('GET', finalURl, false);
-	xhttp.setRequestHeader("Authorization", "Bearer " + jwtUser);
-	xhttp.send();
+	xhttpRequest.open('GET', finalURl, false);
+	xhttpRequest.setRequestHeader("Authorization", "Bearer " + jwtUser);
+	xhttpRequest.send();
 }
 
 function addMenu(item, index) {
@@ -135,22 +136,43 @@ function validateMenu() {
 function loadConversation() {
 
 	var worker = new Worker("/javascript/workers.js?userName=" + userName + "?jwt=" + jwtUser);
-	var menssage;
-
+	
 	worker.onmessage = function(event) {
 
 		console.log('Receve message' + event.data);
 		if (event.data === 401) {
 			window.location.href = window.location.origin + '/myLogin';
 		}
+        
+        statusReceved=event.data; 
+        if(statusReceved==1){
+	    downloadMessage();
+	    messageReceived=JSON.parse(messageReceived);
+	    messageReceived.forEach(addMessagesRetrieve);
+		}
 
-		menssage = JSON.parse(event.data);
-		menssage.forEach(addMessagesRetrieve);
 	};
 
 }
 
-function addMessagesRetrieve(item, index) {
+function downloadMessage(){
+	var finalURl = baseUrl + 'message/retrieveMessages/';
+	xhttpRequest.onreadystatechange = function() {
+		
+		if (this.readyState==4 && this.status==200 ) {
+			console.log('Receve message' + xhttpRequest.responseText);			
+			messageReceived= xhttpRequest.responseText;  
+		}
+		
+	};
+	
+	xhttpRequest.open('GET', finalURl, false);
+	xhttpRequest.setRequestHeader("Authorization", "Bearer "+jwtUser);
+	xhttpRequest.send();
+}
+
+
+function addMessagesRetrieve(item,index) {
 	var textAreaTarget = usersLogged.get(item.sender);
 	console.log('item ->>' + item.sender);
 	highlightUserUnselect(item.sender);
@@ -323,11 +345,9 @@ function highlightUserUnselect(userName) {
 
 function logOut() {
 
-  
-	var xhttp = new XMLHttpRequest();
 	var finalURl = baseUrl + 'exit';
 	
-	xhttp.onreadystatechange = function() {
+	xhttpRequest.onreadystatechange = function() {
 
 		if (this.readyState == 4 && this.status == 401) {
 			  localStorage.jwt=null;
@@ -337,9 +357,9 @@ function logOut() {
 		}
 
 	}
-	xhttp.open('POST', finalURl, false);
-	xhttp.setRequestHeader("Authorization", "Bearer " + jwtUser);
-	xhttp.send();
+	xhttpRequest.open('POST', finalURl, false);
+	xhttpRequest.setRequestHeader("Authorization", "Bearer " + jwtUser);
+	xhttpRequest.send();
 }
 
 
