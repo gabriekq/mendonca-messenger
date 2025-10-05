@@ -1,7 +1,9 @@
 package com.mendonca.menssagerchat.model;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.annotation.PostConstruct;
 import javax.jms.Connection;
@@ -21,18 +23,21 @@ public class MessageManager implements Runnable {
 	@Autowired
 	private Connection connection;
 
-	private ArrayList<PayloadMessage> payloadMessages;
+	private LinkedList<PayloadMessage> payloadMessages;
 
 	private String userName;
 
 	private PayloadMessage payloadMessageSend;
 
 	private Session session;
+	
+	private BlockingQueue<Integer> statusOperation;
 
 	public MessageManager(String userName) {
 		super();
 		this.userName = userName;
-		this.payloadMessages = new ArrayList<>();
+		this.payloadMessages = new LinkedList<>();
+		this.statusOperation = new LinkedBlockingQueue<>();
 	}
 
 	@PostConstruct
@@ -54,7 +59,7 @@ public class MessageManager implements Runnable {
 								PayloadMessage messagePayloadMessage = (PayloadMessage) objectMessage.getObject();
 								payloadMessages.add(messagePayloadMessage);
 								message.acknowledge();
-								payloadMessages.notifyAll();
+								statusOperation.add(1);
 							}
 
 						} catch (JMSException  interruptedException) {
@@ -95,29 +100,19 @@ public class MessageManager implements Runnable {
 
 	public List<PayloadMessage> getMessages() {
 
-		synchronized (this.payloadMessages) {
-
-			while (true) {
-
-				if (!this.payloadMessages.isEmpty()) {
-					ArrayList<PayloadMessage> payloadMessagesReturn = new ArrayList<>(this.payloadMessages);
-					this.payloadMessages.clear();
-					return payloadMessagesReturn;
-				} else {
-
-					try {
-						this.payloadMessages.wait();
-					} catch (InterruptedException interruptedException) {
-						System.err.println(interruptedException.toString());
-						continue;
-					}
-
-				}
-
-			}
-
+	LinkedList<PayloadMessage> payloadMessagesReturn = new LinkedList<>(this.payloadMessages);
+	this.payloadMessages.clear();
+	return payloadMessagesReturn;
+	}
+	
+	public Integer assistStatus() {
+		try {
+			return this.statusOperation.take();
+		} catch (InterruptedException e) {
+			
+			System.err.println(e.getMessage());
+			return 0;
 		}
-
 	}
 	
 	public void closeSessions()  {
