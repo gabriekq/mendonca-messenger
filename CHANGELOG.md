@@ -1,3 +1,11 @@
+## [1.0.5] - 2025-10-26
+
+-	Implement the online/off-line status feature.
+
+-	Move userMessengerRepository into UserMessengerService class.
+
+-	Create saveUser function into UserMessengerService to avoid logic in the SecurityController class.
+
 ## [1.0.4] - 2025-10-04
 
 - Change the logic to receive the income messages.

@@ -74,6 +74,10 @@ public class MessageManager implements Runnable {
 			System.err.println(exception.toString());
 		}
 	}
+	
+	public void updateUsersStatus() {
+		statusOperation.add(2);
+	}
 
 	@Override
 	public void run() {

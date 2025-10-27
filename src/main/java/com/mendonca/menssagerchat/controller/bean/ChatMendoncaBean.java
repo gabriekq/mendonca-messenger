@@ -1,6 +1,7 @@
 package com.mendonca.menssagerchat.controller.bean;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -70,12 +71,18 @@ public class ChatMendoncaBean {
     	};	
     }
 	
-	
 	@Bean
 	public AspectLogs CreateAspectLogs() {
 		AspectLogs aspectLogs = new AspectLogs();
 		return aspectLogs;
 		
+	}
+	
+	@Bean("usersAvalibleMap")
+	@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+	public Map<String,Boolean> UsersAvalible(){
+		Map<String, Boolean> usersAvalible =  new LinkedHashMap<>();
+		return usersAvalible;
 	}
 	
 	

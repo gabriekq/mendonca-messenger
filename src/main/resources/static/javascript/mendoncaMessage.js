@@ -14,7 +14,7 @@ var messageReceived;
 function loadMainPage() {
 	validateMenu();
 	loadUserName();
-	loadUsersAvailable();
+	loadUsersAvailable(0);
 	ajustScreenSize();
 
 	loadConversation();
@@ -87,7 +87,7 @@ function loadUserName() {
 	xhttpRequest.send();
 }
 
-function loadUsersAvailable() {
+function loadUsersAvailable(operation) {
 
 	var finalURl = baseUrl + 'message/usersAvailable/' + userName;
 
@@ -95,8 +95,20 @@ function loadUsersAvailable() {
 
 		if (this.readyState == 4 && this.status == 200) {
 			
+			console.log(xhttpRequest.responseText);
 			arrNames = JSON.parse(xhttpRequest.responseText);
-			arrNames.forEach(addMenu);
+			console.log(arrNames);
+			
+			for(const [key, value] of Object.entries(arrNames) ){
+
+				if(operation===0){
+					addMenu(key,value);
+				}else{
+					console.log('update status');
+					updateUserStatus(key,value);
+				}				
+			}
+
 		}
 	}
 	xhttpRequest.open('GET', finalURl, false);
@@ -104,11 +116,44 @@ function loadUsersAvailable() {
 	xhttpRequest.send();
 }
 
+function updateUserStatus(name,status){
+	var selectDestination = document.getElementById('user-talk');
+	
+	const sizeOptions = selectDestination.length;
+	
+	for(let index=0;index< sizeOptions;index=index+1 ){
+	
+	var nameOption=selectDestination.options[index].childNodes[0].textContent;
+	var colorOption=selectDestination.options[index].style.backgroundColor;
+		
+		if(nameOption===name){
+			console.log('!!!Update status->  '+name+' ->  '+status+' Color -> '+colorOption);
+			if((colorOption==='red') && (status===true)){
+			 selectDestination.options[index].style.backgroundColor = 'chartreuse';
+			}else{
+				
+				if((colorOption==='chartreuse') && (status===false)){
+					selectDestination.options[index].style.backgroundColor = 'red';
+				}		
+			}// inner else 	
+		}	
+	}
+}
+
+
 function addMenu(item, index) {
 	var selectDestination = document.getElementById('user-talk');
 	var option = document.createElement("option");
 	option.text = item;
 	option.index = index;
+	
+	
+	if(index===false){
+		option.style.backgroundColor='red';
+	}else{
+		option.style.backgroundColor='chartreuse';
+	}
+	
 	selectDestination.add(option);
 
 	var elemTextArea = document.createElement('div');
@@ -149,6 +194,10 @@ function loadConversation() {
 	    downloadMessage();
 	    messageReceived=JSON.parse(messageReceived);
 	    messageReceived.forEach(addMessagesRetrieve);
+		}else{
+			console.log('Status receive -> '+statusReceved);
+			loadUsersAvailable(1);
+			
 		}
 
 	};
@@ -361,12 +410,4 @@ function logOut() {
 	xhttpRequest.setRequestHeader("Authorization", "Bearer " + jwtUser);
 	xhttpRequest.send();
 }
-
-
-
-
-
-
-
-
 
