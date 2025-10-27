@@ -17,14 +17,14 @@ import com.mendonca.menssagerchat.controller.bean.ChatMendoncaBean;
 import com.mendonca.menssagerchat.exception.ChatException;
 import com.mendonca.menssagerchat.model.UserLoginMessage;
 import com.mendonca.menssagerchat.model.UserMessenger;
-import com.mendonca.menssagerchat.repository.UserMessengerRepository;
+import com.mendonca.menssagerchat.service.UserMessengerService;
 
 @RestController
 public class SecurityController {
 
 	@Autowired
-	private UserMessengerRepository userMessengerRepository;
-
+	private UserMessengerService userMessengerService;
+	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -35,12 +35,10 @@ public class SecurityController {
 	@PostMapping("/security/register")
 	public ResponseEntity<String> registerUser(@RequestBody UserMessenger userMessenger) {
 
-		if (!userMessengerRepository.existsById(userMessenger.getUserName())) {
-
-			String hashPwd = passwordEncoder.encode(userMessenger.getPassword());
-			userMessenger.setPassword(hashPwd);
-
-			userMessengerRepository.save(userMessenger);
+		String hashPwd = passwordEncoder.encode(userMessenger.getPassword());
+		userMessenger.setPassword(hashPwd);
+		boolean saved=  userMessengerService.saveUser(userMessenger);
+		if (saved) {
 			return ResponseEntity.status(HttpStatus.CREATED).body("Given user details are successfully registered");
 
 		} else {
@@ -65,12 +63,13 @@ public class SecurityController {
 
 	@CrossOrigin(origins = "*")
 	@PostMapping("/exit")
-	public ResponseEntity<?> Logout() {
+	public ResponseEntity<?> logout() {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null) {
 			String username = authentication.getName();
 			if (ChatMendoncaBean.menssagesManager.containsKey(username)) {
+				userMessengerService.alterCurrentStatus(username, Boolean.FALSE);
 				ChatMendoncaBean.menssagesManager.get(username).closeSessions();
 				ChatMendoncaBean.menssagesManager.remove(username);
 			}
@@ -78,7 +77,7 @@ public class SecurityController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).build();
 		}
 
-		return ResponseEntity.status(400).build();
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).build();
 	}
 
 }

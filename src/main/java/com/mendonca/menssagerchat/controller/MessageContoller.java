@@ -1,9 +1,8 @@
 package com.mendonca.menssagerchat.controller;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.mendonca.menssagerchat.controller.bean.ChatMendoncaBean;
 import com.mendonca.menssagerchat.exception.ChatException;
 import com.mendonca.menssagerchat.model.MessageManager;
 import com.mendonca.menssagerchat.model.PayloadMessage;
-import com.mendonca.menssagerchat.repository.UserMessengerRepository;
+
+import com.mendonca.menssagerchat.service.UserMessengerService;
 
 @RestController
 @RequestMapping("message")
@@ -30,8 +29,9 @@ public class MessageContoller {
 	@Autowired
 	private ExecutorService executorService;
 	
+	
 	@Autowired
-	private UserMessengerRepository userMessengerRepository;
+	private UserMessengerService userMessengerService;
 
 	@CrossOrigin(origins = "*")
 	@PostMapping(path = "/send")
@@ -54,13 +54,11 @@ public class MessageContoller {
 	
 	@CrossOrigin(origins = "*")
 	@GetMapping("/usersAvailable/{userName}")
-	public ResponseEntity<List<String>>   getUsersAvailable(@PathVariable String userName  ) {
+	public synchronized ResponseEntity<Map<String,Boolean>>   getUsersAvailable(@PathVariable String userName  ) {
 		
 		validateUserAuthenticate(userName);
-		
-	    ArrayList<String> usersAvailable = new ArrayList<>(userMessengerRepository.findAllUsersById()); 
-	    List<String> usersAvailableFilter = usersAvailable.stream().filter( user -> !user.equalsIgnoreCase(userName)).collect(Collectors.toList());
-		return ResponseEntity.ok(usersAvailableFilter);
+		Map<String,Boolean> usersAvalible = userMessengerService.retreaveUsersAvalible(userName);
+		return ResponseEntity.ok(usersAvalible);
 	}
 	
 	

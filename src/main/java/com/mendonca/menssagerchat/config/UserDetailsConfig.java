@@ -56,7 +56,7 @@ public class UserDetailsConfig implements AuthenticationProvider {
 				System.err.println(jwt);
 				setJwtValue(jwt);
 				createMenssagerManager(userName);
-
+                userMessengerService.alterCurrentStatus(userName, Boolean.TRUE);
 				return new UsernamePasswordAuthenticationToken(userName, password, authorities);
 			} else {
 				throw new BadCredentialsException("Invalid password!");
